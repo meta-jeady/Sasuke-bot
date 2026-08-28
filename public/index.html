@@ -28,6 +28,8 @@ button:disabled{opacity:.5}
 .hint{color:var(--muted);font-size:.84rem;line-height:1.5}
 .err{color:var(--red);text-align:center;font-size:.9rem;min-height:18px;margin-top:8px}
 .bots{text-align:center;color:var(--muted);font-size:.85rem;margin-top:14px}
+.copy-btn{margin-top:10px;background:#1a1c24;border:1px solid var(--accent);color:#a78bfa;padding:10px 16px;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;width:auto}
+.copy-btn.copied{background:var(--green);border-color:var(--green);color:#fff}
 </style>
 </head>
 <body>
@@ -44,13 +46,14 @@ button:disabled{opacity:.5}
 <div id="box" class="code-box">
 <div style="color:var(--muted);font-size:.9rem">TON CODE :</div>
 <div id="code" class="code">--------</div>
+<button class="copy-btn" id="copyBtn" onclick="copyCode()">📋 Copier le code</button>
 <div class="hint">WhatsApp > Paramètres > Appareils connectés > Lier un appareil > <b>Lier avec un numéro de téléphone</b> et colle ce code</div>
 </div>
 </div>
 <div id="bots" class="bots"></div>
 </div>
 <script>
-const dot=document.getElementById('dot'),st=document.getElementById('status'),box=document.getElementById('box'),code=document.getElementById('code'),err=document.getElementById('err'),btn=document.getElementById('btn'),bots=document.getElementById('bots');
+const dot=document.getElementById('dot'),st=document.getElementById('status'),box=document.getElementById('box'),code=document.getElementById('code'),err=document.getElementById('err'),btn=document.getElementById('btn'),bots=document.getElementById('bots'),copyBtn=document.getElementById('copyBtn');
 async function refresh(){
  try{
   const r=await fetch('/api/status'); const d=await r.json();
@@ -66,14 +69,20 @@ async function getCode(){
  try{
   const r=await fetch('/api/pair/'+num); const d=await r.json();
   if(d.error) err.textContent=d.error;
-  else{code.textContent=d.code; box.classList.add('show');}
+  else{code.textContent=d.code; box.classList.add('show'); copyBtn.textContent='📋 Copier le code'; copyBtn.classList.remove('copied');}
  }catch{err.textContent='Erreur réseau'}
  btn.disabled=false; btn.textContent='Obtenir mon Code';
+}
+function copyCode(){
+  const txt=code.textContent.trim();
+  if(!txt || txt.includes('-')) return;
+  navigator.clipboard.writeText(txt).then(()=>{
+    copyBtn.textContent='✅ Copié !';
+    copyBtn.classList.add('copied');
+    setTimeout(()=>{copyBtn.textContent='📋 Copier le code'; copyBtn.classList.remove('copied');},2000);
+  });
 }
 refresh(); setInterval(refresh,3000);
 </script>
 </body>
-</html>
-
-
-Ceci est bon ??
+ </html>
