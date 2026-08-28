@@ -27,7 +27,14 @@ button:disabled{opacity:.5}
 .code{font-family:'Orbitron',monospace;font-size:2.6rem;letter-spacing:8px;color:#a78bfa;background:#1a1c24;padding:16px;border-radius:12px;border:1px solid var(--accent);margin:12px 0}
 .hint{color:var(--muted);font-size:.84rem;line-height:1.5}
 .err{color:var(--red);text-align:center;font-size:.9rem;min-height:18px;margin-top:8px}
-.bots{text-align:center;color:var(--muted);font-size:.85rem;margin-top:14px}
+.bots{margin-top:18px}
+.bots-title{color:var(--muted);font-size:.9rem;margin-bottom:10px;text-align:center}
+.bot-card{background:#1a1c24;border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.bot-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#ef4444);display:flex;align-items:center;justify-content:center;font-weight:700}
+.bot-info{flex:1;text-align:left}
+.bot-num{font-weight:700;font-size:.95rem}
+.bot-status{color:var(--green);font-size:.8rem}
+.bot-date{color:var(--muted);font-size:.75rem}
 .copy-btn{margin-top:10px;background:#1a1c24;border:1px solid var(--accent);color:#a78bfa;padding:10px 16px;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;width:auto}
 .copy-btn.copied{background:var(--green);border-color:var(--green);color:#fff}
 </style>
@@ -47,19 +54,36 @@ button:disabled{opacity:.5}
 <div style="color:var(--muted);font-size:.9rem">TON CODE :</div>
 <div id="code" class="code">--------</div>
 <button class="copy-btn" id="copyBtn" onclick="copyCode()">📋 Copier le code</button>
-<div class="hint">WhatsApp > Paramètres > Appareils connectés > Lier un appareil > <b>Lier avec un numéro de téléphone</b> et colle ce code</div>
+<div class="hint">WhatsApp > Appareils connectés > Lier un appareil > <b>Lier avec un numéro</b></div>
 </div>
 </div>
 <div id="bots" class="bots"></div>
 </div>
 <script>
 const dot=document.getElementById('dot'),st=document.getElementById('status'),box=document.getElementById('box'),code=document.getElementById('code'),err=document.getElementById('err'),btn=document.getElementById('btn'),bots=document.getElementById('bots'),copyBtn=document.getElementById('copyBtn');
+
 async function refresh(){
  try{
   const r=await fetch('/api/status'); const d=await r.json();
   st.textContent=d.status; dot.className='dot '+(d.status.includes('Connecté')?'ok':'wait');
   const b=await fetch('/api/bots'); const bd=await b.json();
-  if(bd.total>0) bots.innerHTML=`✅ Connecté : <b>${bd.bots[0].number}</b>`; else bots.textContent='En attente de connexion...';
+  if(bd.total>0){
+    let html=`<div class="bots-title">🤖 ${bd.total} Bot(s) Connecté(s)</div>`;
+    bd.bots.forEach(bot=>{
+      html+=`<div class="bot-card">
+        <div class="bot-avatar">${bot.number.slice(-2)}</div>
+        <div class="bot-info">
+          <div class="bot-num">+${bot.number}</div>
+          <div class="bot-status">${bot.status}</div>
+          <div class="bot-date">${bot.connectedAt||''}</div>
+        </div>
+        <div style="color:var(--green)">●</div>
+      </div>`;
+    });
+    bots.innerHTML=html;
+  } else {
+    bots.innerHTML=`<div class="bots-title">En attente de connexion...</div>`;
+  }
  }catch{st.textContent='Serveur hors ligne'}
 }
 async function getCode(){
@@ -85,4 +109,4 @@ function copyCode(){
 refresh(); setInterval(refresh,3000);
 </script>
 </body>
- </html>
+</html>
