@@ -1,9 +1,6 @@
 module.exports = {
-  PREFIX: ".",
-  BOT_NAME: "SASUKE-BOT",
   OWNER_NUMBER: "237687960259",
-  OWNER_NAME: "SASUKE",
-  WELCOME: true,
-  ANTILINK: true,
-  ANTILINK_WARN: 3
+  BOT_NAME: "SASUKE-BOT",
+  PREFIX: ".",
+  CHANNEL: "https://whatsapp.com/channel/0029VbE0WHTKWEKo9iyxl43e"
 }
