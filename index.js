@@ -3,13 +3,12 @@ const app = express();
 const { default: makeWASocket, useMultiFileAuthState, makeCacheableSignalKeyStore, Browsers } = require('@whiskeysockets/baileys');
 const pino = require('pino');
 const fs = require('fs');
-const QRCode = require('qrcode');
 
 app.use(express.static('public'));
 app.use(express.json());
 
 const PORT = process.env.PORT || 10000;
-let qrData = null;
+
 let pairingCode = null;
 let botStatus = "Déconnecté";
 let sockInstance = null;
@@ -80,8 +79,8 @@ async function startBot() {
       creds: state.creds,
       keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'silent' }))
     },
-    browser: Browsers.ubuntu("Chrome"), // Important pour que le pairing marche bien
-    printQRInTerminal: false,           // Désactivé car on utilise Pairing Code
+    browser: Browsers.ubuntu("Chrome"),
+    printQRInTerminal: false,
     syncFullHistory: false,
   });
 
@@ -89,16 +88,9 @@ async function startBot() {
   sock.ev.on('creds.update', saveCreds);
 
   sock.ev.on('connection.update', async (update) => {
-    const { connection, qr, lastDisconnect } = update;
-
-    // QR (fallback uniquement)
-    if (qr) {
-      qrData = await QRCode.toDataURL(qr);
-      botStatus = "QR Prêt - ou utilise Pairing Code";
-    }
+    const { connection } = update;
 
     if (connection === 'open') {
-      qrData = null;
       pairingCode = null;
       botStatus = "Connecté ✅";
       connectedAt = new Date().toLocaleString();
@@ -107,7 +99,6 @@ async function startBot() {
 
     if (connection === 'close') {
       botStatus = "Déconnecté - Reconnexion...";
-      qrData = null;
       pairingCode = null;
       setTimeout(startBot, 3000);
     }
@@ -169,7 +160,6 @@ async function startBot() {
 
 app.get('/api/status', (req, res) => {
   res.json({
-    qr: qrData,
     pairingCode: pairingCode,
     status: botStatus
   });
@@ -194,21 +184,19 @@ app.get('/api/bots', (req, res) => {
   }
 });
 
-// === PAIRING CODE (principal) ===
+// === PAIRING CODE UNIQUEMENT ===
 app.get('/api/pair/:number', async (req, res) => {
   try {
     if (!sockInstance) {
       return res.json({ error: "Bot pas encore prêt, réessaie dans 3 secondes" });
     }
 
-    // Nettoyage du numéro
     const num = req.params.number.replace(/[^0-9]/g, '');
     
     if (num.length < 10 || num.length > 15) {
       return res.json({ error: "Numéro invalide" });
     }
 
-    // Si déjà connecté
     if (sockInstance.authState.creds.registered) {
       return res.json({ error: "Bot déjà connecté" });
     }
