@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SASUKE-BOT MANAGER</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:#fff;font-family:Arial;padding:20px}
+.container{max-width:500px;margin:auto}
+.card{background:#111;border:2px solid #25D366;border-radius:20px;padding:25px;margin-bottom:20px;text-align:center;box-shadow:0 0 20px #25D36630}
+.logo{width:100px;height:100px;border-radius:50%;border:3px solid #25D366;object-fit:cover}
+input{width:100%;padding:14px;border-radius:10px;border:2px solid #333;background:#222;color:#fff;margin:10px 0;font-size:16px;outline:none}
+input:focus{border-color:#25D366}
+button{width:100%;padding:14px;background:#25D366;border:none;border-radius:10px;color:#fff;font-weight:bold;cursor:pointer;font-size:16px}
+button:active{transform:scale(0.97)}
+.code-wrap{display:flex;gap:10px;align-items:center;justify-content:center;margin:15px 0}
+.code{font-size:30px;letter-spacing:8px;color:#25D366;font-weight:bold;min-height:40px}
+#copyBtn{display:none;background:#1a1a1a;border:1px solid #25D366;color:#25D366;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:13px;width:auto}
+.bot-list{text-align:left;margin-top:20px}
+.bot-item{background:#1a1a1a;border-left:4px solid #25D366;padding:15px;border-radius:10px;margin:10px 0;display:flex;justify-content:space-between;align-items:center}
+.bot-item.off{border-left-color:red}
+.bot-num{color:#25D366;font-weight:bold;font-size:14px;margin-top:4px;display:block}
+.badge{background:#25D366;padding:4px 10px;border-radius:20px;font-size:12px;white-space:nowrap}
+.badge.off{background:red}
+.qr img{width:220px;border:8px solid #fff;border-radius:15px;margin-top:10px}
+.channel-box{margin-top:20px;background:#0f2a1a;border:1px solid #25D36644;border-radius:15px;padding:15px;text-align:center}
+.channel-btn{display:block;background:#25D366;color:#000;text-align:center;padding:12px;border-radius:10px;font-weight:bold;font-size:14px;text-decoration:none}
+.status-dot{width:10px;height:10px;background:#25D366;border-radius:50%;display:inline-block;margin-right:5px;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <img src="logo.jpg" class="logo" onerror="this.src='https://i.imgur.com/3o5Z6jO.png'">
+    <h2>SASUKE-BOT 🔥</h2>
+    <p style="margin-top:8px"><span class="status-dot"></span><span id="status">Chargement...</span></p>
+    <input id="num" placeholder="2376XXXXXXX ton numéro">
+    <button onclick="getCode()">GET PAIRING CODE</button>
+    <div class="code-wrap">
+      <div class="code" id="code"></div>
+      <button id="copyBtn" onclick="copyCode()">📋 Copier</button>
+    </div>
+    <div class="qr" id="qr"></div>
+  </div>
+
+  <div class="card">
+    <h3>🤖 BOTS CONNECTÉS</h3>
+    <p id="total" style="color:#888;margin:10px 0">0 bot connecté</p>
+    <div class="bot-list" id="botList"></div>
+    <div class="channel-box">
+      <a href="https://whatsapp.com/channel/0029VbE0WHTKWEKo9iyxl43e" target="_blank" class="channel-btn">🔥 REJOINDRE LE CANAL</a>
+    </div>
+  </div>
+</div>
+
+<script>
+async function refresh(){
+  try{
+    const s = await fetch('/api/status').then(r=>r.json());
+    document.getElementById('status').innerText = s.status;
+    document.getElementById('qr').innerHTML = s.qr? '<p style="margin-top:10px">Ou scan QR:</p><img src="'+s.qr+'">' : '';
+
+    const b = await fetch('/api/bots').then(r=>r.json());
+    document.getElementById('total').innerText = b.total + ' bot(s) connecté(s)';
+    let html = '';
+    if(b.bots.length===0) html='<p style="color:#666;text-align:center">Aucun bot connecté</p>';
+    b.bots.forEach(bot=>{
+      const isOn = (bot.status||'').includes('Connecté');
+      let numero = bot.number || bot.id.split(':')[0].split('@')[0] || '';
+      if(numero &&!numero.startsWith('+')) numero = '+' + numero;
+
+      html += `<div class="bot-item ${isOn?'':'off'}">
+        <div>
+          <b>${bot.name||'SASUKE-BOT'}</b>
+          <span class="bot-num">📱 ${numero}</span>
+          <small style="color:#666">${bot.connectedAt||''}</small>
+        </div>
+        <span class="badge ${isOn?'':'off'}">${isOn?'ONLINE ✅':'OFFLINE'}</span>
+      </div>`;
+    });
+    document.getElementById('botList').innerHTML = html;
+  }catch(e){}
+}
+async function getCode(){
+  const n=document.getElementById('num').value.trim();
+  if(!n) return alert('Entre ton numéro!');
+  document.getElementById('code').innerText='...';
+  document.getElementById('copyBtn').style.display='none';
+  try{
+    const r=await fetch('/api/pair/'+n).then(r=>r.json());
+    document.getElementById('code').innerText=r.code||r.error;
+    if(r.code) document.getElementById('copyBtn').style.display='block';
+  }catch{ document.getElementById('code').innerText='Erreur'; }
+}
+function copyCode(){
+  const txt=document.getElementById('code').innerText;
+  navigator.clipboard.writeText(txt);
+  const btn=document.getElementById('copyBtn');
+  btn.innerText='✅ Copié!'; setTimeout(()=>btn.innerText='📋 Copier',1500);
+}
+refresh(); setInterval(refresh,5000);
+</script>
+</body>
+      </html>
