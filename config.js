@@ -1,0 +1,9 @@
+module.exports = {
+  PREFIX: ".",
+  BOT_NAME: "SASUKE-BOT",
+  OWNER_NUMBER: "237687960259",
+  OWNER_NAME: "SASUKE",
+  WELCOME: true,
+  ANTILINK: true,
+  ANTILINK_WARN: 3
+}
