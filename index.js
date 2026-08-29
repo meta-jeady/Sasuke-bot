@@ -14,61 +14,60 @@ let connectedAt = null;
 
 const CONFIG = {
   PREFIX: ".",
-  BOT_NAME: "SASUKE-BOT",
-  OWNER: "237687960259",
+  BOT_NAME: "kčø4p tech | SASUKE-BOT",
+  OWNER: "kčø4p tech",
   CHANNEL: "https://whatsapp.com/channel/0029VbE0WHTKWEKo9iyxl43e"
 };
 
 const MENU36 = `
-╭──〔 GENERAL 〕──
-│ menu
-│ ping
-│ alive
-│ owner
-│ chaine
-╰──
-╭──〔 GROUPE 〕──
-│ tagall
-│ hidetag
-│ kick
-│ add
-│ promote
-│ demote
-│ link
-│ close
-│ open
-│ antilink
-│ welcome
-│ goodbye
-╰──
-╭──〔 STICKER 〕──
-│ sticker
-│ toimg
-│ qc
-│ emojimix
-╰──
-╭──〔 DOWNLOAD 〕──
-│ play
-│ tiktok
-│ fb
-│ insta
-│ apk
-│ ytmp3
-╰──
-╭──〔 OUTILS 〕──
-│ ai
-│ imagine
-│ meteo
-│ calc
-│ trt
-│ ss
-│ del
-│ vcard
-╰──
-📢 ${CONFIG.CHANNEL}
+*╭━─━─━─〔 kčø4p tech | SASUKE-BOT V36 〕─━─━─━╮*
+*│*
+*│ 👑 Owner: kčø4p tech*
+*│ 🤖 Bot: SASUKE-BOT V36*
+*│ ⚡ Statut: En ligne ✅*
+*│ 📅 Date: ${new Date().toLocaleDateString()}*
+*│*
+*├─━─━─━─〔 📌 MENU PRINCIPAL 〕─━─━─━*
+*│*
+*│ ╭──〔 👤 UTILITAIRE 〕──*
+*│ │ ➜.menu - Menu principal*
+*│ │ ➜.ping - Vitesse du bot*
+*│ │ ➜.alive - Statut du bot*
+*│ │ ➜.owner - Contact owner*
+*│ │ ➜.chaine - Chaine officielle*
+*│ │ ➜.pair 237... - Code d'appairage*
+*│ ╰──────────────*
+*│*
+*│ ╭──〔 👥 GESTION GROUPE 〕──*
+*│ │ ➜.tagall [txt] - Tag tous*
+*│ │ ➜.hidetag [txt] - Tag invisible*
+*│ │ ➜.kick @user - Éjecter*
+*│ │ ➜.add 237... - Ajouter membre*
+*│ │ ➜.promote @user - Passer admin*
+*│ │ ➜.demote @user - Retirer admin*
+*│ │ ➜.link - Lien du groupe*
+*│ │ ➜.close - Fermer groupe*
+*│ │ ➜.open - Ouvrir groupe*
+*│ │ ➜.antilink on/off - Anti-lien*
+*│ ╰──────────────*
+*│*
+*│ ╭──〔 🔒 SÉCURITÉ & AUTO 〕──*
+*│ │ ➜.vv - Récupère vue unique*
+*│ │ ➜ Welcome - Bienvenue auto ✅*
+*│ │ ➜ Goodbye - Au revoir auto ✅*
+*│ │ ➜ Antilink - Anti-lien auto ✅*
+*│ ╰──────────────*
+*│*
+*│ ╭──〔 ⚙️ SYSTÈME 〕──*
+*│ │ ➜ Préfixe: [. ]*
+*│ │ ➜ Version: V36.1.0*
+*│ │ ➜ Créateur: kčø4p tech*
+*│ ╰──────────────*
+*│*
+*╰━─━─━─〔 🔚 FIN DU MENU 〕─━─━─━╯*
+*📢 Chaine: ${CONFIG.CHANNEL}*
 `;
 
-// Mémoire antilink
 const antilinkDB = new Set();
 
 async function startBot() {
@@ -88,7 +87,6 @@ async function startBot() {
     if (update.connection === 'open') {
       botStatus = "Connecté ✅";
       connectedAt = new Date().toLocaleString();
-      console.log("✅ CONNECTÉ");
     }
     if (update.connection === 'close') {
       botStatus = "Déconnecté - Reconnexion...";
@@ -96,7 +94,6 @@ async function startBot() {
     }
   });
 
-  // === WELCOME & GOODBYE AUTO ===
   sock.ev.on('group-participants.update', async (anu) => {
     try {
       const metadata = await sock.groupMetadata(anu.id);
@@ -104,20 +101,20 @@ async function startBot() {
 
       for (let p of anu.participants) {
         if (anu.action === 'add') {
-          const txt = `╭──〔 BIENVENUE 〕──\n│ 👤 @${p.split('@')[0]}\n│ 🏷️ ${metadata.subject}\n│ 👥 ${metadata.participants.length} membres\n╰──\n\nBienvenue! Tape.menu\n\n📢 ${CONFIG.CHANNEL}`;
-          if (logo) await sock.sendMessage(anu.id, { image: logo, caption: txt, mentions: [p] });
-          else await sock.sendMessage(anu.id, { text: txt, mentions: [p] });
+          const welcomeTxt = `*╭━━〔 🎉 BIENVENUE CHEZ NOUS 〕━━╮*\n*│*\n*│ 👤 Utilisateur: @${p.split('@')[0]}*\n*│ 🏷️ Groupe: ${metadata.subject}*\n*│ 👥 Membres: ${metadata.participants.length}*\n*│ 🤖 Bot: kčø4p tech*\n*│*\n*│ Bienvenue dans la famille! 🥳*\n*│ Tape.menu pour voir les commandes*\n*│*\n*╰━━━━━━━━━━━━━━━━━━━━╯*\n\n*📢 Rejoins notre chaine officielle 👇*\n*${CONFIG.CHANNEL}*\n*View Channel 👆👆*`;
+          if (logo) await sock.sendMessage(anu.id, { image: logo, caption: welcomeTxt, mentions: [p] });
+          else await sock.sendMessage(anu.id, { text: welcomeTxt, mentions: [p] });
         }
+
         if (anu.action === 'remove') {
-          const txt = `╭──〔 GOODBYE 〕──\n│ 👤 @${p.split('@')[0]}\n╰──\nAurevoir! 👋\n\n📢 ${CONFIG.CHANNEL}`;
-          if (logo) await sock.sendMessage(anu.id, { image: logo, caption: txt, mentions: [p] });
-          else await sock.sendMessage(anu.id, { text: txt, mentions: [p] });
+          const byeTxt = `*╭━━〔 👋 BYE BYE 〕━━╮*\n*│*\n*│ 👤 @${p.split('@')[0]}*\n*│*\n*│ Bye bye 👋*\n*│ Merci d'avoir quitté le groupe,*\n*│ sache qu'on s'en fout de toi 🫩*\n*│*\n*╰━━━━━━━━━━━━━━━━━━━━╯*\n\n*📢 Notre chaine:*\n*${CONFIG.CHANNEL}*\n*View Channel 👆👆*`;
+          if (logo) await sock.sendMessage(anu.id, { image: logo, caption: byeTxt, mentions: [p] });
+          else await sock.sendMessage(anu.id, { text: byeTxt, mentions: [p] });
         }
       }
-    } catch (e) { console.log(e.message) }
+    } catch (e) {}
   });
 
-  // === COMMANDES + ANTILINK ===
   sock.ev.on('messages.upsert', async ({ messages }) => {
     const msg = messages[0];
     if (!msg.message) return;
@@ -126,17 +123,17 @@ async function startBot() {
     const body = msg.message.conversation || msg.message.extendedTextMessage?.text || msg.message.imageMessage?.caption || "";
     const sender = msg.key.participant || from;
 
-    // ANTILINK AUTO
     if (isGroup && antilinkDB.has(from)) {
-      const linkRegex = /https:\/\/chat\.whatsapp\.com\/|https:\/\/whatsapp\.com\/channel\//i;
-      if (linkRegex.test(body)) {
-        const groupMeta = await sock.groupMetadata(from);
-        const isAdmin = groupMeta.participants.find(p => p.id === sender)?.admin;
-        const botIsAdmin = groupMeta.participants.find(p => p.id === sock.user.id)?.admin;
-        if (!isAdmin && botIsAdmin) {
-          await sock.sendMessage(from, { delete: msg.key });
-          await sock.sendMessage(from, { text: `🚫 @${sender.split('@')[0]} Lien interdit supprimé!`, mentions: [sender] });
-        }
+      if (/https:\/\/chat\.whatsapp\.com\/|https:\/\/whatsapp\.com\/channel\//i.test(body)) {
+        try {
+          const g = await sock.groupMetadata(from);
+          const isAdmin = g.participants.find(p => p.id === sender)?.admin;
+          const botAdmin = g.participants.find(p => p.id === sock.user.id)?.admin;
+          if (!isAdmin && botAdmin) {
+            await sock.sendMessage(from, { delete: msg.key });
+            await sock.sendMessage(from, { text: `*🚫 @${sender.split('@')[0]} Lien interdit!*`, mentions: [sender] });
+          }
+        } catch {}
       }
     }
 
@@ -150,22 +147,44 @@ async function startBot() {
       if (logo) await sock.sendMessage(from, { image: logo, caption: MENU36 }, { quoted: msg });
       else reply(MENU36);
     }
-    if (cmd === 'ping') reply("Pong! 🏓");
-    if (cmd === 'alive') reply(`✅ ${CONFIG.BOT_NAME} ON\n⏰ ${connectedAt}`);
-    if (cmd === 'owner' || cmd === 'chaine') reply(CONFIG.CHANNEL);
+    if (cmd === 'ping') reply("*Pong! 🏓*\n*kčø4p tech*");
+    if (cmd === 'alive') reply(`*✅ ${CONFIG.BOT_NAME} ON*\n*⏰ ${connectedAt}*\n*👑 Owner: kčø4p tech*`);
+    if (cmd === 'owner' || cmd === 'chaine') reply(`*📢 Chaine kčø4p tech:*\n*${CONFIG.CHANNEL}*\n*View Channel 👆👆*`);
 
-    // ANTILINK ON/OFF
+    if (cmd === 'pair') {
+      if (!args) return reply("*❌ Usage:.pair 2376XXXXXXX*\n\n*Exemple:.pair 237687960259*");
+      try {
+        const num = args.replace(/[^0-9]/g, '');
+        if (num.length < 8) return reply("*❌ Numéro invalide*");
+        await reply(`*⏳ Génération du code pour ${num}...*`);
+        const code = await sock.requestPairingCode(num);
+        await reply(`*╭──〔 🔑 PAIRING CODE 〕──*\n*│*\n*│ ➜ Code: ${code}*\n*│ ➜ Numéro: ${num}*\n*│*\n*│ 1. Ouvre WhatsApp*\n*│ 2. Appareils liés > Lier*\n*│ 3. Colle le code*\n*│*\n*╰──*\n*📢 ${CONFIG.CHANNEL}*`);
+      } catch (e) { reply(`*❌ Erreur: ${e.message}*`); }
+    }
+
+    if (cmd === 'vv') {
+      const quoted = msg.message.extendedTextMessage?.contextInfo?.quotedMessage;
+      if (!quoted) return reply("*Réponds à une vue unique avec.vv*");
+      let viewOnce = quoted.viewOnceMessage || quoted.viewOnceMessageV2 || quoted.viewOnceMessageV2Extension || quoted;
+      const content = viewOnce.message || viewOnce;
+      const type = Object.keys(content)[0];
+      if (type === 'imageMessage') await sock.sendMessage(from, { image: content.imageMessage, caption: content.imageMessage.caption || "" }, { quoted: msg });
+      else if (type === 'videoMessage') await sock.sendMessage(from, { video: content.videoMessage, caption: content.videoMessage.caption || "" }, { quoted: msg });
+      else reply("*❌ Impossible*");
+    }
+
     if (cmd === 'antilink') {
-      if (!isGroup) return reply("Groupe seulement");
-      if (args === 'on') {
-        antilinkDB.add(from);
-        reply("✅ ANTILINK activé");
-      } else if (args === 'off') {
-        antilinkDB.delete(from);
-        reply("❌ ANTILINK désactivé");
-      } else {
-        reply("Utilise:.antilink on /.antilink off");
-      }
+      if (!isGroup) return;
+      if (args === 'on') { antilinkDB.add(from); reply("*✅ ANTILINK activé*"); }
+      else if (args === 'off') { antilinkDB.delete(from); reply("*❌ ANTILINK désactivé*"); }
+      else reply("*.antilink on / off*");
+    }
+
+    if (cmd === 'tagall' || cmd === 'hidetag') {
+      if (!isGroup) return;
+      const meta = await sock.groupMetadata(from);
+      const mentions = meta.participants.map(p => p.id);
+      await sock.sendMessage(from, { text: args || "*📢 Mention @kčø4p tech*", mentions });
     }
   });
 }
@@ -185,5 +204,5 @@ app.get('/api/pair/:number', async (req, res) => {
   } catch (e) { res.json({ error: e.message }); }
 });
 
-app.listen(PORT, () => console.log(`🚀 RUN ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 kčø4p tech RUN ${PORT}`));
 startBot();
