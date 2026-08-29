@@ -9,61 +9,45 @@ let sockInstance=null, botStatus="Déconnecté", connectedAt=null;
 
 const CONFIG = {
   PREFIX: ".",
-  BOT_NAME: "SASUKE-BOT V38",
+  BOT_NAME: "SASUKE-BOT V40",
   OWNER: "237687960259",
-  CHANNEL: "https://whatsapp.com/channel/0029VbE0WHTKWEKo9iyxl43e"
+  CHANNEL: "https://whatsapp.com/channel/0029VbE0WHTKWEKo9iyxl43e",
+  SITE: "https://sasuke-bot-guk6.onrender.com/"
 };
 
 const messageCache = new Map();
 
 const MENU_COMPLET = `
-*╭━━━〔 SASUKE-BOT V38 〕━━━┈⊷*
+*╭━━━〔 SASUKE-BOT V40 〕━━━┈⊷*
 *│ 👑 Owner: 237687960259*
-*│ 🤖 Bot: ${CONFIG.BOT_NAME}*
-*│ ⚡ Prefix: ${CONFIG.PREFIX}*
+*│ 🤖 Bot: SASUKE-BOT V40*
+*│ ⚡ Prefix:.*
 *│ ✅ Anti-Delete: AUTO ON*
 *│*
-*├─〔 BIENVENUE & BYE 〕*
-*│ • Auto Welcome avec logo*
-*│ • Auto Bye Bye avec logo*
-*│*
 *├─〔 GENERAL 〕*
-*│ • ${CONFIG.PREFIX}menu*
-*│ • ${CONFIG.PREFIX}ping*
-*│ • ${CONFIG.PREFIX}alive*
-*│ • ${CONFIG.PREFIX}owner*
-*│ • ${CONFIG.PREFIX}chaine*
-*│ • ${CONFIG.PREFIX}vv*
-*│*
-*├─〔 🔥 5 CMD IMPORTANTES 〕*
-*│ • ${CONFIG.PREFIX}antidelete*
-*│ • ${CONFIG.PREFIX}kick @*
-*│ • ${CONFIG.PREFIX}promote @*
-*│ • ${CONFIG.PREFIX}demote @*
-*│ • ${CONFIG.PREFIX}sticker*
-*│ • ${CONFIG.PREFIX}del*
+*│ •.menu.ping.alive*
+*│ •.owner.chaine.vv*
 *│*
 *├─〔 GROUPE 〕*
-*│ • ${CONFIG.PREFIX}tagall*
-*│ • ${CONFIG.PREFIX}hidetag*
-*│ • ${CONFIG.PREFIX}antilink on/off*
-*│ • ${CONFIG.PREFIX}kick*
-*│ • ${CONFIG.PREFIX}promote*
-*│ • ${CONFIG.PREFIX}demote*
+*│ •.tagall - affiche tous nums*
+*│ •.hidetag.kick*
+*│ •.promote.demote*
+*│ •.sticker.del*
 *│*
 *├─〔 AUTO 〕*
-*│ ✅ Anti-Delete auto -> IB*
-*│ ✅ Welcome logo auto*
-*│ ✅ Bye Bye logo auto*
-*│ ✅ Antilink auto*
+*│ ✅ Welcome + Logo*
+*│ ✅ Bye Bye + Logo*
+*│ ✅ Anti-Delete -> IB auto*
 *│*
 *╰━━━━━━━━━━━━━━━━┈⊷*
 *📢 ${CONFIG.CHANNEL}*
-*💬 Répond en IB + Groupe*
+
+*🔗 ${CONFIG.SITE}*
+> *By: KČØ4P TECH*⚙️
 `;
 
 function getLogo(){
-  const paths=['./public/logo.jpg','./public/logo.png','./logo.jpg','./public/logo.jpeg'];
+  const paths=['./public/logo.jpg','./public/logo.png','./logo.jpg'];
   for(let p of paths) if(fs.existsSync(p)) return fs.readFileSync(p);
   return null;
 }
@@ -79,11 +63,10 @@ async function startBot(){
   sockInstance=sock;
   sock.ev.on('creds.update', saveCreds);
   sock.ev.on('connection.update', u=>{
-    if(u.connection==='open'){ botStatus="Connecté ✅"; connectedAt=new Date().toLocaleString(); console.log('✅ V38 CONNECTE - ANTI-DELETE AUTO'); }
+    if(u.connection==='open'){ botStatus="Connecté ✅"; connectedAt=new Date().toLocaleString(); }
     if(u.connection==='close') setTimeout(startBot, 3000);
   });
 
-  // WELCOME & BYE BYE
   sock.ev.on('group-participants.update', async anu=>{
     try{
       const meta = await sock.groupMetadata(anu.id); const logo=getLogo();
@@ -100,7 +83,6 @@ async function startBot(){
     }catch{}
   });
 
-  // MESSAGE + ANTI-DELETE AUTO
   sock.ev.on('messages.upsert', async ({messages})=>{
     const msg=messages[0]; if(!msg.message) return;
     const from=msg.key.remoteJid; const isGroup=from.endsWith('@g.us');
@@ -111,7 +93,6 @@ async function startBot(){
       messageCache.set(msg.key.id, { content: msg.message, from, sender, time: new Date() });
       if(messageCache.size>500) messageCache.delete(messageCache.keys().next().value);
     }
-
     if(msg.message.protocolMessage && msg.message.protocolMessage.type===0){
       const delKey=msg.message.protocolMessage.key;
       const cached=messageCache.get(delKey.id);
@@ -121,7 +102,7 @@ async function startBot(){
           const type=Object.keys(cached.content)[0];
           let cap=`*🚨 ANTI-DELETE AUTO 🚨*\n\n*👤 @${cached.sender.split('@')[0]}*\n*📍 ${cached.from}*\n*🕒 ${cached.time.toLocaleString()}*\n`;
           if(type==='conversation' || type==='extendedTextMessage'){
-            cap+=`\n*💬 Message:*\n${cached.content.conversation||cached.content.extendedTextMessage?.text}`;
+            cap+=`\n*💬 Message:* ${cached.content.conversation||cached.content.extendedTextMessage?.text}`;
             await sock.sendMessage(ownerJid,{text:cap,mentions:[cached.sender]});
           }else if(type==='imageMessage'){
             await sock.sendMessage(ownerJid,{text:cap+`\n*📸 Image supprimée*`,mentions:[cached.sender]});
@@ -132,7 +113,7 @@ async function startBot(){
           }else{
             await sock.sendMessage(ownerJid,{text:cap+`\n*📎 ${type} supprimé*`,mentions:[cached.sender]});
           }
-        }catch(e){}
+        }catch{}
       }
     }
 
@@ -142,51 +123,41 @@ async function startBot(){
     const argsJoin=args.join(' ');
     const logo=getLogo();
     const reply=(t)=>sock.sendMessage(from,{text:t},{quoted:msg});
-    const replyLogo=(t)=>{ if(logo) return sock.sendMessage(from,{image:logo,caption:t},{quoted:msg}); else return reply(t); };
 
-    // MENU AVEC LOGO
-    if(cmd==='menu' || cmd==='help'){
+    if(cmd==='menu'){
       if(logo) await sock.sendMessage(from,{image:logo,caption:MENU_COMPLET},{quoted:msg});
       else reply(MENU_COMPLET);
     }
+    if(cmd==='ping') reply(`*Pong! ${Date.now()%1000}ms*`);
+    if(cmd==='alive') reply(`*✅ ${CONFIG.BOT_NAME} ONLINE*\n*📢 ${CONFIG.CHANNEL}*`);
+    if(cmd==='owner' || cmd==='chaine') reply(`*${CONFIG.CHANNEL}*`);
 
-    if(cmd==='ping') reply(`*Pong!* 🏓 ${Date.now()%1000}ms\n*${CONFIG.BOT_NAME}*`);
-    if(cmd==='alive') replyLogo(`*✅ ${CONFIG.BOT_NAME} ONLINE*\n*⏰ ${connectedAt}*\n*Anti-Delete: AUTO ✅*\n*📢 ${CONFIG.CHANNEL}*`);
-    if(cmd==='owner' || cmd==='chaine' || cmd==='channel') reply(`*📢 Chaine Officielle:*\n*${CONFIG.CHANNEL}*`);
-    if(cmd==='antidelete') reply(`*✅ ANTI-DELETE AUTO ACTIF*\nTous les msg supprimés vont en IB automatiquement`);
-
-    if(cmd==='vv'){
-      const q=msg.message.extendedTextMessage?.contextInfo?.quotedMessage;
-      if(!q) return reply("*Réponds à vue unique*");
-      const v=q.viewOnceMessage||q.viewOnceMessageV2||q; const c=v.message||v; const t=Object.keys(c)[0];
-      if(t==='imageMessage') await sock.sendMessage(from,{image:c.imageMessage},{quoted:msg});
-      if(t==='videoMessage') await sock.sendMessage(from,{video:c.videoMessage},{quoted:msg});
-    }
-
-    if(cmd==='antilink'){
+    if(cmd==='tagall'){
       if(!isGroup) return;
-      if(argsJoin==='on'){ sock.antilink=1; reply("*✅ ANTILINK ON*"); }
-      else reply("*❌ ANTILINK OFF*");
+      const meta=await sock.groupMetadata(from);
+      const mentions=meta.participants.map(p=>p.id);
+      let text=`*╭──〔 TAGALL - ${meta.participants.length} MEMBRES 〕──*\n*│ 📢 ${argsJoin||'Attention'}*\n*╰━━━━━━━━━━━━*\n\n`;
+      for(let i=0;i<meta.participants.length;i++){
+        text+=`*${i+1}. @${meta.participants[i].id.split('@')[0]}*\n`;
+      }
+      text+=`\n*📢 ${CONFIG.CHANNEL}*`;
+      await sock.sendMessage(from,{text,mentions},{quoted:msg});
     }
-
-    if(cmd==='tagall' || cmd==='hidetag'){
+    if(cmd==='hidetag'){
       if(!isGroup) return;
       const meta=await sock.groupMetadata(from);
       await sock.sendMessage(from,{text:argsJoin||`*📢 ${CONFIG.BOT_NAME}*`,mentions:meta.participants.map(p=>p.id)});
     }
-
     if(cmd==='kick'){
       if(!isGroup) return;
       const jid=msg.message.extendedTextMessage?.contextInfo?.mentionedJid?.[0];
       if(jid) await sock.groupParticipantsUpdate(from,[jid],"remove");
     }
-
     if(cmd==='promote' || cmd==='demote'){
       if(!isGroup) return;
       const jid=msg.message.extendedTextMessage?.contextInfo?.mentionedJid?.[0];
       if(jid) await sock.groupParticipantsUpdate(from,[jid],cmd);
     }
-
     if(cmd==='sticker' || cmd==='s'){
       const q=msg.message.extendedTextMessage?.contextInfo?.quotedMessage;
       const m=q||msg.message;
@@ -195,11 +166,17 @@ async function startBot(){
         await sock.sendMessage(from,{sticker:buf},{quoted:msg});
       }
     }
-
     if(cmd==='del'){
       const qid=msg.message.extendedTextMessage?.contextInfo?.stanzaId;
       const qp=msg.message.extendedTextMessage?.contextInfo?.participant;
       if(qid) await sock.sendMessage(from,{delete:{remoteJid:from,fromMe:false,id:qid,participant:qp}});
+    }
+    if(cmd==='vv'){
+      const q=msg.message.extendedTextMessage?.contextInfo?.quotedMessage;
+      if(!q) return;
+      const v=q.viewOnceMessage||q.viewOnceMessageV2||q; const c=v.message||v; const t=Object.keys(c)[0];
+      if(t==='imageMessage') await sock.sendMessage(from,{image:c.imageMessage},{quoted:msg});
+      if(t==='videoMessage') await sock.sendMessage(from,{video:c.videoMessage},{quoted:msg});
     }
   });
 }
@@ -227,5 +204,5 @@ app.get('/api/bots',(req,res)=>{
 });
 app.get('/api/pair/:number', async (req,res)=>{ try{ res.json({code:await getPairingCode(req.params.number.replace(/[^0-9]/g,''))}); }catch(e){res.json({error:e.message});} });
 app.post('/api/pair', async (req,res)=>{ try{ res.json({code:await getPairingCode((req.body.number||"").replace(/[^0-9]/g,''))}); }catch(e){res.json({error:e.message});} });
-app.listen(PORT,()=>console.log(`🚀 V38 MENU COMPLET ${PORT}`));
+app.listen(PORT,()=>console.log(`🚀 V40 FINAL ${PORT}`));
 startBot();
