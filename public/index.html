@@ -68,7 +68,7 @@ button:disabled{opacity:.5;transform:none!important}
 <div id="box" class="code-box">
 <div style="color:var(--muted);font-size:.85rem;font-weight:600;letter-spacing:1px">TON CODE DE PAIRING</div>
 <div id="code" class="code">--------</div>
-<button class="copy-btn" id="copyBtn" onclick="copyCode()">📋 Copier le code</button>
+<button class="copy-btn" id="copyBtn" type="button" onclick="copyCode()">📋 Copier le code</button>
 <div class="hint" style="margin-top:12px">WhatsApp > <b>Appareils connectés</b> > <b>Lier un appareil</b> > <b>Lier avec un numéro de téléphone</b><br>Colle le code en 20 secondes!</div>
 </div>
 <a class="channel-btn" href="https://whatsapp.com/channel/0029VbE0WHTKWEKo9iyxl43e" target="_blank">📢 View Channel 👆👆</a>
@@ -78,6 +78,7 @@ button:disabled{opacity:.5;transform:none!important}
 </div>
 <script>
 const dot=document.getElementById('dot'),st=document.getElementById('status'),box=document.getElementById('box'),code=document.getElementById('code'),err=document.getElementById('err'),btn=document.getElementById('btn'),bots=document.getElementById('bots'),copyBtn=document.getElementById('copyBtn');
+
 async function refresh(){
  try{
   const r=await fetch('/api/status'); const d=await r.json();
@@ -102,6 +103,7 @@ async function refresh(){
   }
  }catch{st.textContent='Serveur hors ligne'; dot.className='dot'}
 }
+
 async function getCode(){
  const num=document.getElementById('phone').value.replace(/[^0-9]/g,'');
  if(num.length<10){err.textContent='Mets un numéro valide (ex: 2376...)';return}
@@ -113,15 +115,42 @@ async function getCode(){
  }catch{err.textContent='Erreur réseau, réessaye'}
  btn.disabled=false; btn.textContent='OBTENIR MON CODE';
 }
+
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');
+  ta.value=text;
+  ta.style.position='fixed';
+  ta.style.left='-9999px';
+  ta.style.top='0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try{
+    document.execCommand('copy');
+    copyBtn.textContent='✅ Copié !';
+    copyBtn.classList.add('copied');
+    setTimeout(()=>{copyBtn.textContent='📋 Copier le code'; copyBtn.classList.remove('copied');},2000);
+  }catch(e){
+    err.textContent='Copie manuelle: '+text;
+  }
+  document.body.removeChild(ta);
+}
+
 function copyCode(){
   const txt=code.textContent.trim();
   if(!txt || txt.includes('-')) return;
-  navigator.clipboard.writeText(txt).then(()=>{
-    copyBtn.textContent='✅ Copié !'; copyBtn.classList.add('copied');
-    setTimeout(()=>{copyBtn.textContent='📋 Copier le code'; copyBtn.classList.remove('copied');},2000);
-  });
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(txt).then(()=>{
+      copyBtn.textContent='✅ Copié !';
+      copyBtn.classList.add('copied');
+      setTimeout(()=>{copyBtn.textContent='📋 Copier le code'; copyBtn.classList.remove('copied');},2000);
+    }).catch(()=>fallbackCopy(txt));
+  } else {
+    fallbackCopy(txt);
+  }
 }
+
 refresh(); setInterval(refresh,3000);
 </script>
 </body>
- </html>
+                                                                            </html>
