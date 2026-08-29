@@ -3,130 +3,147 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>kčø4p tech • SASUKE-BOT V36</title>
+<title>SASUKE BOT V36 - kčø4p tech</title>
+<meta name="description" content="SASUKE-BOT V36 - Interface pairing WhatsApp par kčø4p tech">
 <meta name="theme-color" content="#7c3aed">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Orbitron:wght@800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Arial,sans-serif}
 body{min-height:100vh;color:#fff;background:#05060b;overflow-x:hidden}
-body::before{content:"";position:fixed;width:450px;height:450px;top:-180px;left:-150px;background:#7c3aed;filter:blur(150px);opacity:.20;border-radius:50%;z-index:-1}
-body::after{content:"";position:fixed;width:400px;height:400px;right:-180px;bottom:-160px;background:#ef4444;filter:blur(150px);opacity:.15;border-radius:50%;z-index:-1}
-.header{width:100%;height:70px;padding:0 7%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ffffff0d;background:#080910cc;backdrop-filter:blur(20px);position:sticky;top:0;z-index:10}
-.brand{display:flex;align-items:center;gap:10px;font-family:Orbitron;font-size:18px;font-weight:800;background:linear-gradient(90deg,#a78bfa,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.brand-icon{width:38px;height:38px;border-radius:12px;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#7c3aed,#ef4444);box-shadow:0 0 20px #7c3aed66;color:#fff}
-.pro{font-size:9px;padding:4px 8px;border-radius:6px;background:#ffffff12;color:#a78bfa;-webkit-text-fill-color:#a78bfa}
+body::before{content:"";position:fixed;width:420px;height:420px;top:-180px;left:-150px;background:#7c3aed;filter:blur(150px);opacity:.22;border-radius:50%;z-index:-1}
+body::after{content:"";position:fixed;width:400px;height:400px;right:-180px;bottom:-160px;background:#ef4444;filter:blur(150px);opacity:.18;border-radius:50%;z-index:-1}
+.header{width:100%;height:70px;padding:0 7%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ffffff0d;background:#080910cc;backdrop-filter:blur(20px);position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800}
+.brand-icon{width:38px;height:38px;border-radius:12px;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#7c3aed,#ef4444);box-shadow:0 0 20px #7c3aed55}
+.pro{font-size:9px;padding:4px 7px;border-radius:6px;background:#ffffff12;color:#fca5a5}
+.nav-links{display:flex;gap:24px;align-items:center}
+.nav-links a{color:#8992a7;text-decoration:none;font-size:13px;font-weight:500}
+.nav-links a:hover{color:#c4b5fd}
+@media(max-width:768px){.nav-links{display:none}}
 .container{width:92%;max-width:1050px;margin:35px auto}
 .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:20px}
-@media(max-width:800px){.hero{grid-template-columns:1fr}}
+@media(max-width:750px){.hero{grid-template-columns:1fr}}
 .card{border:1px solid #ffffff12;background:#0a0c14dd;backdrop-filter:blur(20px);border-radius:24px;box-shadow:0 20px 70px #0008}
 .main-card{padding:32px}
-.badge{display:inline-flex;gap:7px;padding:7px 12px;border-radius:20px;background:#7c3aed18;border:1px solid #8b5cf633;color:#c4b5fd;font-size:10px;font-weight:bold}
-.hero h1{margin-top:18px;font-family:Orbitron;font-size:38px;line-height:1}
+.badge{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:20px;background:#7c3aed18;border:1px solid #ef444433;color:#c4b5fd;font-size:10px;font-weight:bold}
+.hero h1{margin-top:20px;font-size:38px;line-height:1.1}
 .gradient{background:linear-gradient(90deg,#a78bfa,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.description{margin-top:12px;color:#8992a7;line-height:1.7;font-size:13px}
-.dev{margin-top:22px;padding:14px;border-radius:14px;background:#05060b;border:1px solid #ffffff0d;display:flex;justify-content:space-between;align-items:center}
+.description{margin-top:14px;color:#8992a7;line-height:1.7;font-size:13px}
+.dev{margin-top:25px;padding:15px;border-radius:15px;background:#05060b;border:1px solid #ffffff0d;display:flex;justify-content:space-between;align-items:center;gap:10px}
 .dev-left{display:flex;align-items:center;gap:11px}
 .dev-avatar{width:40px;height:40px;border-radius:12px;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#7c3aed,#ef4444)}
-.pair-title{margin-top:26px;margin-bottom:10px;font-size:14px;font-weight:700}
+.dev-name{font-size:12px;font-weight:bold}.dev-number{margin-top:4px;color:#697386;font-size:10px}.online{color:#22c55e;font-size:10px}
+.pair-title{margin-top:28px;margin-bottom:10px;font-size:14px;font-weight:bold}
 .input-box{display:flex;gap:8px}
-.input-box input{flex:1;min-width:0;padding:15px;border:1px solid #ffffff12;border-radius:13px;outline:none;background:#05060b;color:white;text-align:center;font-size:1rem}
-.pair-btn{padding:0 22px;border:0;border-radius:13px;cursor:pointer;color:white;font-weight:800;background:linear-gradient(135deg,#7c3aed,#ef4444);box-shadow:0 8px 25px #7c3aed33}
+.input-box input{flex:1;min-width:0;padding:15px;border:1px solid #ffffff12;border-radius:13px;outline:none;background:#05060b;color:white;text-align:center}
+.input-box input:focus{border-color:#ef4444;box-shadow:0 0 20px #ef444422}
+.pair-btn{padding:0 20px;border:0;border-radius:13px;cursor:pointer;color:white;font-weight:bold;background:linear-gradient(135deg,#7c3aed,#ef4444);box-shadow:0 8px 25px #ef444433;transition:transform .2s}
+.pair-btn:hover{transform:translateY(-2px)}
 @media(max-width:500px){.input-box{flex-direction:column}.pair-btn{padding:15px}}
-.code-box{display:none;margin-top:15px;padding:16px;border-radius:15px;border:1px dashed #8b5cf655;background:#05060b;align-items:center;justify-content:space-between}
-.code{font-family:Orbitron;font-size:26px;letter-spacing:6px;color:#a78bfa;user-select:all;cursor:pointer}
-.copy{border:0;padding:10px 14px;border-radius:10px;cursor:pointer;color:white;background:#ffffff12;font-weight:700}
+.code-box{display:none;margin-top:15px;padding:15px;border-radius:15px;border:1px dashed #ef444455;background:#05060b;align-items:center;justify-content:space-between}
+.code{font-size:22px;font-weight:bold;letter-spacing:5px;color:#fca5a5;user-select:all;cursor:pointer}
+.copy{border:0;padding:8px 12px;border-radius:9px;cursor:pointer;color:white;background:#ffffff12;transition:.2s}
 .copy.copied{background:#22c55e}
-.side-card{padding:25px;text-align:center}
-.logo{width:120px;height:120px;margin:5px auto 18px;display:block;border-radius:50%;object-fit:cover;border:3px solid #7c3aed;box-shadow:0 0 30px #7c3aed88,0 0 60px #ef444433}
-.status{padding:16px;border-radius:14px;background:#05060b;border:1px solid #ffffff0d}
-.status-dot{width:10px;height:10px;display:inline-block;border-radius:50%;background:#22c55e;box-shadow:0 0 12px #22c55e;margin-right:6px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px;text-align:left}
-.stat{padding:14px;border-radius:14px;background:#05060b;border:1px solid #ffffff0d}
-.stat-number{font-family:Orbitron;font-size:20px;font-weight:800}
+.side-card{padding:25px}
+.side-title{font-size:13px;color:#a8b0c2;margin-bottom:20px}
+.logo{width:115px;height:115px;margin:5px auto 20px;display:block;border-radius:50%;object-fit:cover;border:3px solid #ef4444;box-shadow:0 0 20px #ef444488,0 0 50px #7c3aed33}
+.status{text-align:center;padding:18px;border-radius:16px;background:#05060b;border:1px solid #ffffff0d}
+.status-dot{width:10px;height:10px;display:inline-block;border-radius:50%;background:#22c55e;box-shadow:0 0 12px #22c55e;margin-right:6px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.status strong{color:#22c55e;font-size:12px}.status small{display:block;margin-top:8px;color:#626b7e;font-size:10px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+.stat{padding:15px;border-radius:14px;background:#05060b;border:1px solid #ffffff0d}
+.stat i{color:#ef4444;margin-bottom:8px}.stat-number{font-size:22px;font-weight:bold}.stat-label{margin-top:4px;color:#687184;font-size:9px}
 .bots{margin-top:20px;padding:25px}
 .section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
-.counter{padding:5px 10px;border-radius:20px;font-size:10px;background:#7c3aed22;color:#c4b5fd}
-.bot-item{padding:13px;border-radius:13px;background:#05060b;border:1px solid #ffffff0d;display:flex;justify-content:space-between;margin-bottom:8px}
-.footer{text-align:center;margin-top:25px;color:#4f586b;font-size:10px;padding-bottom:20px}
-.footer b{color:#a78bfa}
-.channel-btn{display:block;text-align:center;margin-top:18px;background:rgba(124,58,237,.1);border:1px solid #7c3aed;color:#a78bfa;padding:13px;border-radius:12px;text-decoration:none;font-weight:700}
+.section-head h2{font-size:15px}.counter{padding:5px 10px;border-radius:20px;font-size:10px;background:#ef444422;color:#fca5a5}
+#botsList{display:grid;gap:8px}
+.bot-item{padding:13px;border-radius:13px;background:#05060b;border:1px solid #ffffff0d;display:flex;align-items:center;justify-content:space-between}
+.bot-number{font-size:12px}.bot-status{color:#22c55e;font-size:9px}
+.dot{display:inline-block;width:7px;height:7px;margin-right:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 9px #22c55e}
+.footer{margin-top:25px;text-align:center;color:#4f586b;font-size:10px;padding-bottom:25px}.footer b{color:#ef4444}.footer a{color:#a78bfa;text-decoration:none}
 </style>
 </head>
 <body>
-<header class="header"><div class="brand"><div class="brand-icon"><i class="fas fa-fire"></i></div>kčø4p tech <span class="pro">SASUKE V36</span></div></header>
+<header class="header">
+<div class="brand"><div class="brand-icon"><i class="fas fa-fire"></i></div>SASUKE BOT<span class="pro">V36</span></div>
+<nav class="nav-links"><a href="#bots">Status</a><a href="#contact">Contact</a></nav>
+</header>
 <main class="container">
 <div class="hero">
 <section class="card main-card">
-<span class="badge"><i class="fas fa-bolt"></i> SASUKE-BOT V36 - PRO PANEL</span>
-<h1>SASUKE <span class="gradient">BOT V36</span></h1>
-<p class="description">Connecte ton bot WhatsApp en 10 secondes. Système de pairing ultra-rapide par <b>kčø4p tech</b>. Antilink, antispam, 99% uptime.</p>
-<div class="dev"><div class="dev-left"><div class="dev-avatar"><i class="fas fa-code"></i></div><div><div style="font-weight:800;font-size:13px">kčø4p tech</div><div style="color:#697386;font-size:10px">Owner • SASUKE-BOT V36</div></div></div><div style="color:#22c55e;font-size:11px;font-weight:700">● ONLINE</div></div>
-<div class="pair-title"><i class="fab fa-whatsapp" style="color:#a78bfa"></i> Connexion WhatsApp</div>
-<div class="input-box"><input id="number" type="tel" placeholder="2376XXXXXXXX"><button class="pair-btn" onclick="pair()">OBTENIR CODE</button></div>
-<div id="codeBox" class="code-box"><span id="code" class="code" onclick="copyCode()">--------</span><button class="copy" id="copyBtn" onclick="copyCode()"><i class="fas fa-copy"></i> Copier</button></div>
-<div id="status" style="margin-top:12px;color:#667085;font-size:11px">En attente...</div>
-<a class="channel-btn" href="https://whatsapp.com/channel/0029VbE0WHTKWEKo9iyxl43e" target="_blank">📢 View Channel</a>
+<span class="badge"><i class="fas fa-bolt"></i> SASUKE-BOT V36 • kčø4p tech</span>
+<h1>SASUKE BOT <span class="gradient">V36</span></h1>
+<p class="description">Interface professionnelle SASUKE-BOT V36. Connexion WhatsApp ultra-rapide, antilink auto, 99% uptime. Par kčø4p tech.</p>
+<div class="dev"><div class="dev-left"><div class="dev-avatar"><i class="fas fa-code"></i></div><div><div class="dev-name">kčø4p tech</div><div class="dev-number">SASUKE-BOT Owner</div></div></div><div class="online">● ONLINE</div></div>
+<div class="pair-title"><i class="fab fa-whatsapp" style="color:#ef4444"></i> Connexion WhatsApp</div>
+<div class="input-box"><input id="number" type="tel" placeholder="2376XXXXXXXX"><button class="pair-btn" onclick="pair()"><i class="fas fa-link"></i> CONNECTER</button></div>
+<div id="codeBox" class="code-box"><span id="code" class="code" onclick="copyCode()">⏳</span><button class="copy" id="copyBtn" onclick="copyCode()"><i class="fas fa-copy"></i></button></div>
+<div id="status" style="margin-top:12px;color:#667085;font-size:10px">Vérification du serveur...</div>
 </section>
 <section class="card side-card">
+<div class="side-title"><i class="fas fa-server"></i> SERVER STATUS</div>
 <img class="logo" src="logo.jpg" onerror="this.src='https://tmpfiles.org/dl/wlw22rrYni5f/img-20260821-wa0054.jpg'" alt="SASUKE">
-<div class="status"><span class="status-dot"></span><strong style="color:#22c55e;font-size:12px">SERVEUR SASUKE ACTIF</strong><br><small style="color:#626b7e;font-size:10px">SASUKE-BOT V36 • kčø4p tech</small></div>
-<div class="stats"><div class="stat"><i class="fas fa-robot" style="color:#a78bfa"></i><div class="stat-number" id="count">0</div><div style="color:#687184;font-size:9px">BOTS CONNECTÉS</div></div><div class="stat"><i class="fas fa-signal" style="color:#a78bfa"></i><div class="stat-number">99%</div><div style="color:#687184;font-size:9px">UPTIME</div></div></div>
+<div class="status"><span class="status-dot"></span><strong>SERVEUR SASUKE OPÉRATIONNEL</strong><small>SASUKE-BOT V36</small></div>
+<div class="stats"><div class="stat"><i class="fas fa-robot"></i><div class="stat-number" id="count">0</div><div class="stat-label">BOTS CONNECTÉS</div></div><div class="stat"><i class="fas fa-signal"></i><div class="stat-number">99%</div><div class="stat-label">DISPONIBILITÉ</div></div></div>
 </section>
 </div>
-<section class="card bots"><div class="section-head"><h2 style="font-family:Orbitron;font-size:14px"><i class="fas fa-network-wired" style="color:#a78bfa"></i> BOTS EN LIGNE</h2><span id="counter" class="counter">0 ONLINE</span></div><div id="botsList" style="text-align:center;color:#4f586b;font-size:11px;padding:15px">Aucun bot connecté</div></section>
-<div class="footer">© 2026 <b>kčø4p tech</b> • SASUKE-BOT V36 • Propulsé par Baileys</div>
+<section class="card bots" id="bots">
+<div class="section-head"><h2><i class="fas fa-network-wired" style="color:#ef4444"></i> BOTS CONNECTÉS</h2><span id="counter" class="counter">0 ONLINE</span></div>
+<div id="botsList"><div style="text-align:center;padding:20px;color:#4f586b;font-size:11px">Aucun bot connecté</div></div>
+</section>
+<div class="footer" id="contact">SASUKE-BOT V36 • DEV <b>kčø4p tech</b> • <a href="https://whatsapp.com/channel/0029VbE0WHTKWEKo9iyxl43e">Channel</a></div>
 </main>
-
 <script>
-let CURRENT_CODE = "";
+let CURRENT_CODE="";
 async function loadStatus(){
  try{
   const r=await fetch('/api/status'); const d=await r.json();
   const total=d.total||0;
   document.getElementById('count').innerText=total;
   document.getElementById('counter').innerText=total+' ONLINE';
-  document.getElementById('status').innerHTML='🟢 '+d.status+' - '+total+' bot(s)';
+  document.getElementById('status').innerHTML='🟢 '+total+' bot(s) connecté(s)';
   const list=document.getElementById('botsList'); list.innerHTML='';
   if(d.bots && d.bots.length){
-    d.bots.forEach(b=>{
-      const num = typeof b === 'string' ? b : b.number;
-      const div=document.createElement('div'); div.className='bot-item';
-      div.innerHTML=`<span><span style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-right:7px;box-shadow:0 0 8px #22c55e"></span>+${num}</span><span style="color:#22c55e;font-size:10px">CONNECTÉ</span>`;
-      list.appendChild(div);
+    d.bots.forEach(number=>{
+      const n = typeof number==='string'?number:number.number||number;
+      const item=document.createElement('div'); item.className='bot-item';
+      item.innerHTML=`<span class="bot-number"><span class="dot"></span>+${n}</span><span class="bot-status">ONLINE</span>`;
+      list.appendChild(item);
     });
-  } else list.innerHTML='<div style="padding:15px">En attente de connexion...</div>';
- }catch{ document.getElementById('status').innerHTML='🔴 Serveur hors ligne'; }
+  } else list.innerHTML=`<div style="text-align:center;padding:20px;color:#4f586b;font-size:11px;">Aucun bot connecté</div>`;
+ }catch{ document.getElementById('status').innerHTML='🔴 Serveur indisponible'; }
 }
 async function pair(){
- const num=document.getElementById('number').value.replace(/[^0-9]/g,'');
- if(!num || num.length<10){alert('Numéro invalide ex: 2376...');return}
- const box=document.getElementById('codeBox'); const codeEl=document.getElementById('code');
- box.style.display='flex'; codeEl.innerText='⏳';
+ const input=document.getElementById('number'); const number=input.value.trim();
+ if(!number){alert('Entrez votre numéro');return}
+ const box=document.getElementById('codeBox'); const code=document.getElementById('code');
+ box.style.display='flex'; code.innerText='⏳';
  try{
-  let data;
-  try{ const r=await fetch('/api/pair/'+num); data=await r.json(); if(!data.code) throw 0; }
-  catch{ const r=await fetch('/api/pair',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({number:num})}); data=await r.json(); }
-  if(data.code){
-    CURRENT_CODE=data.code; codeEl.innerText=CURRENT_CODE;
-    copyCode(true);
-  } else codeEl.innerText=data.error||'ERREUR';
- }catch{ codeEl.innerText='ERREUR RESEAU'; }
+  const response=await fetch('/api/pair',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({number:number})});
+  const data=await response.json();
+  if(data.code){CURRENT_CODE=data.code; code.innerText=CURRENT_CODE; copyCode(true);}
+  else code.innerText=data.error||'❌ ERROR';
+ }catch{ code.innerText='❌ ERROR'; }
 }
 function copyCode(auto=false){
- const txt = CURRENT_CODE || document.getElementById('code').innerText;
- if(!txt || txt.includes('⏳') || txt.includes('ERREUR') || txt.includes('-')) return;
- const i=document.createElement('input'); i.value=txt; document.body.appendChild(i);
- i.select(); i.setSelectionRange(0,99999);
- let ok=false; try{ ok=document.execCommand('copy'); }catch{}
- document.body.removeChild(i);
+ const codeEl=document.getElementById('code');
+ const txt=CURRENT_CODE || codeEl.innerText;
+ if(!txt || txt.includes('⏳') || txt.includes('❌')) return;
+ const inp=document.createElement('input'); inp.value=txt; document.body.appendChild(inp);
+ inp.select(); inp.setSelectionRange(0,99999);
+ let ok=false; try{ok=document.execCommand('copy');}catch{}
+ document.body.removeChild(inp);
  if(navigator.clipboard) navigator.clipboard.writeText(txt).catch(()=>{});
  const btn=document.getElementById('copyBtn');
- btn.innerHTML='✅ Copié !'; btn.classList.add('copied');
- document.getElementById('status').innerHTML='✅ Nouveau code copié: <b style="color:#a78bfa">'+txt+'</b><br><small>WhatsApp > Appareils connectés > Lier avec numéro</small>';
- setTimeout(()=>{btn.innerHTML='<i class="fas fa-copy"></i> Copier'; btn.classList.remove('copied');},3500);
+ if(ok || auto){
+   btn.innerHTML='<i class="fas fa-check"></i> Copié'; btn.classList.add('copied');
+   if(!auto) document.getElementById('status').innerHTML='✅ Copié: <b style="color:#fca5a5">'+txt+'</b>';
+   setTimeout(()=>{btn.innerHTML='<i class="fas fa-copy"></i>'; btn.classList.remove('copied');},3000);
+ } else { prompt('Copie:',txt); }
 }
 loadStatus(); setInterval(loadStatus,3000);
 </script>
 </body>
-                                                                                                                                                                                                                                                                                                                            </html>
+                                                                                           </html>
