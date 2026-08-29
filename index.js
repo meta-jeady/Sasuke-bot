@@ -30,8 +30,7 @@ const CONFIG = {
 const SIGNATURE = `
 ────────────────────
 *Connecte-toi aussi au bot 👇👇*
-${CONFIG.WEBSITE}
-`;
+${CONFIG.WEBSITE}`;
 
 const MENU36 = `
 ╭──〔 *GENERAL* 〕──
@@ -59,8 +58,7 @@ const MENU36 = `
 │ *Goodbye* - Au revoir auto ✅
 ╰──
 *📢 ${CONFIG.CHANNEL}*
-${SIGNATURE}
-`;
+${SIGNATURE}`;
 
 const antilinkDB = new Set();
 
@@ -110,12 +108,12 @@ async function startBot() {
 
       for (let p of anu.participants) {
         if (anu.action === 'add') {
-          const txt = `╭──〔 *BIENVENUE* 〕──\n│ 👤 @${p.split('@')[0]}\n│ 🏷️ ${metadata.subject}\n│ 👥 ${metadata.participants.length} membres\n╰──\n\nBienvenue! Tape *.menu*\n📢 \( {CONFIG.CHANNEL} \){SIGNATURE}`;
+          const txt = `╭──〔 *BIENVENUE* 〕──\n│ 👤 @${p.split('@')[0]}\n│ 🏷️ ${metadata.subject}\n│ 👥 \( {metadata.participants.length} membres\n╰──\n\nBienvenue! Tape *.menu* \){SIGNATURE}`;
           if (logo) await sock.sendMessage(anu.id, { image: logo, caption: txt, mentions: [p] });
           else await sock.sendMessage(anu.id, { text: txt, mentions: [p] });
         }
         if (anu.action === 'remove') {
-          const txt = `╭──〔 *GOODBYE* 〕──\n│ 👤 @${p.split('@')[0]}\n╰──\nAurevoir! 👋\n📢 \( {CONFIG.CHANNEL} \){SIGNATURE}`;
+          const txt = `╭──〔 *GOODBYE* 〕──\n│ 👤 @\( {p.split('@')[0]}\n╰──\nAurevoir! 👋 \){SIGNATURE}`;
           if (logo) await sock.sendMessage(anu.id, { image: logo, caption: txt, mentions: [p] });
           else await sock.sendMessage(anu.id, { text: txt, mentions: [p] });
         }
@@ -130,23 +128,27 @@ async function startBot() {
     if (type !== 'notify') return;
 
     const msg = messages[0];
-    if (!msg.message || msg.key.fromMe) return;
+    if (!msg.message) return;
 
     const from = msg.key.remoteJid;
     const isGroup = from.endsWith('@g.us');
     const sender = msg.key.participant || from;
 
-    // Extraction robuste du texte
+    // Extraction du texte
     let body = "";
-    if (msg.message.conversation) body = msg.message.conversation;
-    else if (msg.message.extendedTextMessage?.text) body = msg.message.extendedTextMessage.text;
-    else if (msg.message.imageMessage?.caption) body = msg.message.imageMessage.caption;
-    else if (msg.message.videoMessage?.caption) body = msg.message.videoMessage.caption;
-    else if (msg.message.buttonsResponseMessage?.selectedButtonId) body = msg.message.buttonsResponseMessage.selectedButtonId;
-    else if (msg.message.listResponseMessage?.singleSelectReply?.selectedRowId) body = msg.message.listResponseMessage.singleSelectReply.selectedRowId;
+    const m = msg.message;
+    if (m.conversation) body = m.conversation;
+    else if (m.extendedTextMessage?.text) body = m.extendedTextMessage.text;
+    else if (m.imageMessage?.caption) body = m.imageMessage.caption;
+    else if (m.videoMessage?.caption) body = m.videoMessage.caption;
+    else if (m.buttonsResponseMessage?.selectedButtonId) body = m.buttonsResponseMessage.selectedButtonId;
+    else if (m.listResponseMessage?.singleSelectReply?.selectedRowId) body = m.listResponseMessage.singleSelectReply.selectedRowId;
+    else if (m.templateButtonReplyMessage?.selectedId) body = m.templateButtonReplyMessage.selectedId;
+
+    body = (body || "").trim();
 
     // ===== ANTILINK =====
-    if (isGroup && antilinkDB.has(from)) {
+    if (isGroup && antilinkDB.has(from) && body) {
       if (/https:\/\/chat\.whatsapp\.com\/|https:\/\/whatsapp\.com\/channel\//i.test(body)) {
         try {
           const g = await sock.groupMetadata(from);
@@ -167,33 +169,54 @@ async function startBot() {
 
     if (!body.startsWith(CONFIG.PREFIX)) return;
 
-    const argsArray = body.slice(1).trim().split(/ +/);
-    const cmd = argsArray[0].toLowerCase();
+    const argsArray = body.slice(CONFIG.PREFIX.length).trim().split(/ +/);
+    const cmd = (argsArray[0] || "").toLowerCase();
     const args = argsArray.slice(1).join(' ');
-    const reply = (t) => sock.sendMessage(from, { text: t + SIGNATURE }, { quoted: msg });
 
-    // ===== MENU =====
-    if (cmd === 'menu') {
-      const logo = fs.existsSync('./public/logo.jpg') ? fs.readFileSync('./public/logo.jpg') : null;
-      if (logo) await sock.sendMessage(from, { image: logo, caption: MENU36 }, { quoted: msg });
-      else reply(MENU36);
-    }
+    const reply = async (text) => {
+      await sock.sendMessage(from, { text: text + SIGNATURE }, { quoted: msg });
+    };
 
-    // ===== PING =====
-    if (cmd === 'ping') {
-      const start = Date.now();
-      await sock.sendMessage(from, { 
-        text: `*Pong!* 🏓\n⏱️ Latence : *\( {Date.now() - start} ms* \){SIGNATURE}` 
-      }, { quoted: msg });
-    }
+    try {
+      // ==================== MENU ====================
+      if (cmd === 'menu') {
+        try {
+          if (fs.existsSync('./public/logo.jpg')) {
+            const logo = fs.readFileSync('./public/logo.jpg');
+            await sock.sendMessage(from, { image: logo, caption: MENU36 }, { quoted: msg });
+          } else {
+            await sock.sendMessage(from, { text: MENU36 }, { quoted: msg });
+          }
+        } catch (e) {
+          await sock.sendMessage(from, { text: MENU36 }, { quoted: msg });
+        }
+        return;
+      }
 
-    // ===== ALIVE / OWNER =====
-    if (cmd === 'alive') reply(`*✅ ${CONFIG.BOT_NAME} ON*\n⏰ ${connectedAt || "N/A"}`);
-    if (cmd === 'owner' || cmd === 'chaine') reply(CONFIG.CHANNEL);
+      // ==================== PING ====================
+      if (cmd === 'ping') {
+        const start = Date.now();
+        const latency = Date.now() - start;
+        await sock.sendMessage(from, { 
+          text: `*Pong!* 🏓\n⏱️ Latence : *\( {latency} ms* \){SIGNATURE}` 
+        }, { quoted: msg });
+        return;
+      }
 
-    // ===== .VV (VUE UNIQUE) =====
-    if (cmd === 'vv') {
-      try {
+      // ==================== ALIVE ====================
+      if (cmd === 'alive') {
+        await reply(`*✅ ${CONFIG.BOT_NAME} est en ligne*\n⏰ Connecté depuis : ${connectedAt || "N/A"}`);
+        return;
+      }
+
+      // ==================== OWNER / CHAINE ====================
+      if (cmd === 'owner' || cmd === 'chaine') {
+        await reply(`*📢 Chaîne / Owner*\n${CONFIG.CHANNEL}`);
+        return;
+      }
+
+      // ==================== VV (Vue Unique) ====================
+      if (cmd === 'vv') {
         const quoted = msg.message?.extendedTextMessage?.contextInfo?.quotedMessage;
         if (!quoted) return reply("Réponds à une *vue unique* avec *.vv*");
 
@@ -203,7 +226,7 @@ async function startBot() {
           || quoted;
 
         const content = viewOnceMsg.message || viewOnceMsg;
-        const type = Object.keys(content)[0];
+        const type = Object.keys(content || {})[0];
 
         if (!['imageMessage', 'videoMessage'].includes(type)) {
           return reply("❌ Ce n'est pas une image ou une vidéo vue unique.");
@@ -229,57 +252,46 @@ async function startBot() {
           }
         );
 
+        const caption = (content[type]?.caption || "✅ Vue unique récupérée") + SIGNATURE;
+
         if (type === 'imageMessage') {
-          await sock.sendMessage(from, { 
-            image: buffer, 
-            caption: (content.imageMessage?.caption || "✅ Vue unique récupérée") + SIGNATURE
-          }, { quoted: msg });
+          await sock.sendMessage(from, { image: buffer, caption }, { quoted: msg });
         } else {
-          await sock.sendMessage(from, { 
-            video: buffer, 
-            caption: (content.videoMessage?.caption || "✅ Vue unique récupérée") + SIGNATURE
-          }, { quoted: msg });
+          await sock.sendMessage(from, { video: buffer, caption }, { quoted: msg });
         }
-      } catch (e) {
-        console.error("Erreur .vv:", e);
-        reply("❌ Impossible de récupérer la vue unique.");
+        return;
       }
-    }
 
-    // ===== ANTILINK =====
-    if (cmd === 'antilink') {
-      if (!isGroup) return reply("❌ Commande réservée aux groupes");
-      if (args === 'on') { 
-        antilinkDB.add(from); 
-        reply("*✅ ANTILINK activé*"); 
-      } else if (args === 'off') { 
-        antilinkDB.delete(from); 
-        reply("*❌ ANTILINK désactivé*"); 
-      } else {
-        reply("*.antilink on / off*");
+      // ==================== ANTILINK ====================
+      if (cmd === 'antilink') {
+        if (!isGroup) return reply("❌ Commande réservée aux groupes");
+        if (args === 'on') {
+          antilinkDB.add(from);
+          return reply("*✅ ANTILINK activé*");
+        } else if (args === 'off') {
+          antilinkDB.delete(from);
+          return reply("*❌ ANTILINK désactivé*");
+        } else {
+          return reply("Utilise : *.antilink on* ou *.antilink off*");
+        }
       }
-    }
 
-    // ===== TAGALL / HIDETAG =====
-    if (cmd === 'tagall' || cmd === 'hidetag') {
-      if (!isGroup) return reply("❌ Commande réservée aux groupes");
-      try {
+      // ==================== TAGALL / HIDETAG ====================
+      if (cmd === 'tagall' || cmd === 'hidetag') {
+        if (!isGroup) return reply("❌ Commande réservée aux groupes");
         const meta = await sock.groupMetadata(from);
         const mentions = meta.participants.map(p => p.id);
         await sock.sendMessage(from, { 
           text: (args || "*📢 Mention de tous les membres*") + SIGNATURE, 
           mentions 
         });
-      } catch (e) {
-        reply("❌ Erreur lors du tag.");
+        return;
       }
-    }
 
-    // ===== .OPEN / .CLOSE =====
-    if (cmd === 'open' || cmd === 'close') {
-      if (!isGroup) return reply("❌ Commande réservée aux groupes");
-      
-      try {
+      // ==================== OPEN / CLOSE ====================
+      if (cmd === 'open' || cmd === 'close') {
+        if (!isGroup) return reply("❌ Commande réservée aux groupes");
+
         const meta = await sock.groupMetadata(from);
         const botId = sock.user.id.split(':')[0] + '@s.whatsapp.net';
         const botIsAdmin = meta.participants.find(p => p.id === botId || p.id === sock.user.id)?.admin;
@@ -290,22 +302,17 @@ async function startBot() {
 
         if (cmd === 'close') {
           await sock.groupSettingUpdate(from, 'announcement');
-          reply("🔒 *Groupe fermé*\nSeuls les admins peuvent écrire.");
+          return reply("🔒 *Groupe fermé*\nSeuls les admins peuvent écrire.");
         } else {
           await sock.groupSettingUpdate(from, 'not_announcement');
-          reply("🔓 *Groupe ouvert*\nTout le monde peut écrire.");
+          return reply("🔓 *Groupe ouvert*\nTout le monde peut écrire.");
         }
-      } catch (e) {
-        console.error("Erreur open/close:", e);
-        reply("❌ Impossible de modifier les paramètres du groupe.");
       }
-    }
 
-    // ===== KICK / PROMOTE / DEMOTE / ADD =====
-    if (['kick', 'promote', 'demote', 'add'].includes(cmd)) {
-      if (!isGroup) return reply("❌ Commande réservée aux groupes");
-      
-      try {
+      // ==================== KICK / PROMOTE / DEMOTE / ADD ====================
+      if (['kick', 'promote', 'demote', 'add'].includes(cmd)) {
+        if (!isGroup) return reply("❌ Commande réservée aux groupes");
+
         const meta = await sock.groupMetadata(from);
         const botId = sock.user.id.split(':')[0] + '@s.whatsapp.net';
         const botIsAdmin = meta.participants.find(p => p.id === botId || p.id === sock.user.id)?.admin;
@@ -315,45 +322,48 @@ async function startBot() {
         if (!senderIsAdmin) return reply("❌ Seuls les admins peuvent utiliser cette commande.");
 
         let target = null;
-        if (msg.message?.extendedTextMessage?.contextInfo?.mentionedJid?.[0]) {
-          target = msg.message.extendedTextMessage.contextInfo.mentionedJid[0];
-        } else if (msg.message?.extendedTextMessage?.contextInfo?.participant) {
-          target = msg.message.extendedTextMessage.contextInfo.participant;
-        } else if (args) {
+        const ctx = msg.message?.extendedTextMessage?.contextInfo;
+        if (ctx?.mentionedJid?.[0]) target = ctx.mentionedJid[0];
+        else if (ctx?.participant) target = ctx.participant;
+        else if (args) {
           const num = args.replace(/[^0-9]/g, '');
           if (num) target = num + '@s.whatsapp.net';
         }
 
-        if (!target) return reply(`Mentionne quelqu'un ou réponds à son message.\nExemple: *.${cmd} @user*`);
+        if (!target) return reply(`Mentionne quelqu'un ou réponds à son message.\nExemple : *.${cmd} @user*`);
 
         if (cmd === 'kick') {
           await sock.groupParticipantsUpdate(from, [target], 'remove');
-          reply(`✅ @${target.split('@')[0]} a été retiré.`);
-        } else if (cmd === 'promote') {
-          await sock.groupParticipantsUpdate(from, [target], 'promote');
-          reply(`✅ @${target.split('@')[0]} est maintenant admin.`);
-        } else if (cmd === 'demote') {
-          await sock.groupParticipantsUpdate(from, [target], 'demote');
-          reply(`✅ @${target.split('@')[0]} n'est plus admin.`);
-        } else if (cmd === 'add') {
-          await sock.groupParticipantsUpdate(from, [target], 'add');
-          reply(`✅ Membre ajouté.`);
+          return reply(`✅ @${target.split('@')[0]} a été retiré.`);
         }
-      } catch (e) {
-        console.error(e);
-        reply("❌ Échec de l'action.");
+        if (cmd === 'promote') {
+          await sock.groupParticipantsUpdate(from, [target], 'promote');
+          return reply(`✅ @${target.split('@')[0]} est maintenant admin.`);
+        }
+        if (cmd === 'demote') {
+          await sock.groupParticipantsUpdate(from, [target], 'demote');
+          return reply(`✅ @${target.split('@')[0]} n'est plus admin.`);
+        }
+        if (cmd === 'add') {
+          await sock.groupParticipantsUpdate(from, [target], 'add');
+          return reply(`✅ Membre ajouté.`);
+        }
       }
-    }
 
-    // ===== .LINK =====
-    if (cmd === 'link') {
-      if (!isGroup) return reply("❌ Commande réservée aux groupes");
-      try {
-        const code = await sock.groupInviteCode(from);
-        reply(`🔗 Lien du groupe :\nhttps://chat.whatsapp.com/${code}`);
-      } catch (e) {
-        reply("❌ Impossible de récupérer le lien (le bot doit être admin).");
+      // ==================== LINK ====================
+      if (cmd === 'link') {
+        if (!isGroup) return reply("❌ Commande réservée aux groupes");
+        try {
+          const code = await sock.groupInviteCode(from);
+          return reply(`🔗 Lien du groupe :\nhttps://chat.whatsapp.com/${code}`);
+        } catch (e) {
+          return reply("❌ Impossible de récupérer le lien (le bot doit être admin).");
+        }
       }
+
+    } catch (err) {
+      console.error("Erreur commande:", err);
+      await sock.sendMessage(from, { text: "❌ Une erreur est survenue." + SIGNATURE }, { quoted: msg });
     }
   });
 }
@@ -421,9 +431,7 @@ app.get('/api/pair/:number', async (req, res) => {
 
   } catch (e) {
     console.error("Erreur pairing:", e.message);
-    res.json({ 
-      error: e.message || "Impossible de générer le code." 
-    });
+    res.json({ error: e.message || "Impossible de générer le code." });
   }
 });
 
